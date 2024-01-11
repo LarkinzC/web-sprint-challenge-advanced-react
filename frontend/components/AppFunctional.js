@@ -75,9 +75,17 @@ export default function AppFunctional(props) {
       setCurrent(nextIndex)
       setSteps(steps + 1)
       setMessage(initialMessage)
+    } else {
+      setMessage(`you can't go ${direction}`)
     }
 
   }
+
+  function emailInput(e) {
+    e.preventDefault()
+    const value = e.target.value
+    setEmail(value) 
+   }
 
 
   return (
@@ -106,7 +114,7 @@ export default function AppFunctional(props) {
         <button onClick={reset} id="reset">reset</button>
       </div>
       <form>
-        <input id="email" type="email" placeholder="type email"></input>
+        <input value={email} id="email" type="email" placeholder="type email" onChange={emailInput}></input>
         <input id="submit" type="submit"></input>
       </form>
     </div>
