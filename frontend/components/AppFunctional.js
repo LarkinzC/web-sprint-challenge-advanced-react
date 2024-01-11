@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import axios from 'axios'
+
 
 // Suggested initial states
 const initialMessage = ''
@@ -87,6 +89,24 @@ export default function AppFunctional(props) {
     setEmail(value) 
    }
 
+ function sendPayload() {
+    const { x, y} = getXY()
+    const payload = {
+      x,
+      y,
+      steps,
+      email
+    }
+    
+    axios.post('http://localhost:9000/api/result', payload)
+    .then(res => {
+      console.log('Server response', res.data)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+   }
+
 
   return (
     <div id="wrapper" className={props.className}>
@@ -115,7 +135,7 @@ export default function AppFunctional(props) {
       </div>
       <form>
         <input value={email} id="email" type="email" placeholder="type email" onChange={emailInput}></input>
-        <input id="submit" type="submit"></input>
+        <input onClick={sendPayload} id="submit" type="submit"></input>
       </form>
     </div>
   )
