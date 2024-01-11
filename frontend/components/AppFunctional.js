@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 // Suggested initial states
 const initialMessage = ''
@@ -7,28 +7,43 @@ const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
 
 export default function AppFunctional(props) {
+  const [ steps, setSteps] = useState(0)
+  const [ current, setCurrent] = useState(initialIndex)
   // THE FOLLOWING HELPERS ARE JUST RECOMMENDATIONS.
   // You can delete them and build your own logic from scratch.
 
   function getXY() {
     // It it not necessary to have a state to track the coordinates.
     // It's enough to know what index the "B" is at, to be able to calculate them.
+    const gridSize = 3;
+    const x = (current % gridSize) +1;
+    const y = Math.floor(current / gridSize) +1;
+    return { x, y }; 
   }
 
   function getXYMessage() {
     // It it not necessary to have a state to track the "Coordinates (2, 2)" message for the user.
     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
     // returns the fully constructed string.
+    const {x, y} = getXY()
+    return `Coordinates (${x}, ${y})`
   }
 
   function reset() {
     // Use this helper to reset all states to their initial values.
+    setCurrent(initialIndex)
+    setSteps(0)
   }
 
   function getNextIndex(direction) {
     // This helper takes a direction ("left", "up", etc) and calculates what the next index
     // of the "B" would be. If the move is impossible because we are at the edge of the grid,
-    // this helper should return the current index unchanged.
+    // this helper should return the current index unchange
+    const {x, y} = getXY()
+    let next = current
+    if(direction === 'left' && x > 1) {
+      return next - 1
+    }
   }
 
   function move(evt) {
@@ -47,14 +62,14 @@ export default function AppFunctional(props) {
   return (
     <div id="wrapper" className={props.className}>
       <div className="info">
-        <h3 id="coordinates">Coordinates (2, 2)</h3>
+        <h3 id="coordinates">Coordinates {getXYMessage()}</h3>
         <h3 id="steps">You moved 0 times</h3>
       </div>
       <div id="grid">
         {
           [0, 1, 2, 3, 4, 5, 6, 7, 8].map(idx => (
-            <div key={idx} className={`square${idx === 4 ? ' active' : ''}`}>
-              {idx === 4 ? 'B' : null}
+            <div key={idx} className={`square${idx === current ? ' active' : ''}`}>
+              {idx === current ? 'B' : null}
             </div>
           ))
         }
