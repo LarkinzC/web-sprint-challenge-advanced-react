@@ -1,4 +1,6 @@
 // Write your tests here
-test('sanity', () => {
-  expect(true).toBe(false)
-})
+import AppFunctional from "./AppFunctional"
+
+test('sanity', async () => {
+  expect(screen.findByText('Welcome to the GRID').toBeVisible())
+  })

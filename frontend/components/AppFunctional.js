@@ -31,7 +31,6 @@ export default function AppFunctional(props) {
     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
     // returns the fully constructed string.
     const {x, y} = getXY()
-    console.log({x, y})
     return `(${x}, ${y})`
   }
 
@@ -39,6 +38,8 @@ export default function AppFunctional(props) {
     // Use this helper to reset all states to their initial values.
     setCurrent(initialIndex)
     setSteps(0)
+    setMessage(initialMessage)
+    setEmail(initialEmail)
   }
 
   function getNextIndex(direction) {
@@ -51,7 +52,6 @@ export default function AppFunctional(props) {
     const downVal = +3
     const upVal = -3
     let next = current
-    console.log(next, direction)
       if(direction === 'left' && x > 1) {
      return next += leftVal
     } else if (direction === 'right' && x < 3) {
@@ -72,13 +72,12 @@ export default function AppFunctional(props) {
     evt.preventDefault()
     const direction = evt.target.id.toLowerCase()
     const nextIndex = getNextIndex(direction)
-    console.log(evt.target.id)
     if (nextIndex !== current) {
       setCurrent(nextIndex)
       setSteps(steps + 1)
       setMessage(initialMessage)
     } else {
-      setMessage(`you can't go ${direction}`)
+      setMessage(`You can't go ${direction}`)
     }
 
   }
@@ -89,7 +88,8 @@ export default function AppFunctional(props) {
     setEmail(value) 
    }
 
- function sendPayload() {
+ function onSubmit(evt) {
+  evt.preventDefault()
     const { x, y} = getXY()
     const payload = {
       x,
@@ -97,14 +97,16 @@ export default function AppFunctional(props) {
       steps,
       email
     }
-    
     axios.post('http://localhost:9000/api/result', payload)
     .then(res => {
-      console.log('Server response', res.data)
+      setMessage(res.data.message)
     })
     .catch(err => {
-      console.log(err)
+      setMessage(err.response.data.message)
     })
+    .finally(
+      setEmail(initialEmail)
+    )
    }
 
 
@@ -112,7 +114,7 @@ export default function AppFunctional(props) {
     <div id="wrapper" className={props.className}>
       <div className="info">
         <h3 id="coordinates">Coordinates {getXYMessage()}</h3>
-        <h3 id="steps">You moved {steps} times</h3>
+        <h3 id="steps">You moved {steps} {steps !== 1 ? 'times' : 'time'}</h3>
       </div>
       <div id="grid">
         {
@@ -133,9 +135,9 @@ export default function AppFunctional(props) {
         <button onClick={move} id="down">DOWN</button>
         <button onClick={reset} id="reset">reset</button>
       </div>
-      <form>
+      <form onSubmit={onSubmit}>
         <input value={email} id="email" type="email" placeholder="type email" onChange={emailInput}></input>
-        <input onClick={sendPayload} id="submit" type="submit"></input>
+        <input  id="submit" type="submit"></input>
       </form>
     </div>
   )
